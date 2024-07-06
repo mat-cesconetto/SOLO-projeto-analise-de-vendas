@@ -103,7 +103,7 @@ print("Array de Valores de Venda:", array_valor)
 #     except Exception as e:
 #         print(f"Erro ao padronizar data: {e}")
 #         return None
-
+# print(padronizar_data())
 
 df_produtos = pd.DataFrame({
     coluna_produtos: array_produto,
@@ -125,16 +125,28 @@ df = pd.DataFrame({
     coluna_desconto: array_desconto
 })
 
-df2 = pd.DataFrame({
+df_ProdutoporRegiao = pd.DataFrame({
     coluna_produtos: array_produto,
     coluna_regiao: array_regiao,
     coluna_valor: array_valor,
 })
 
-df2_filtrado = df2[df2[coluna_valor] != 0]
+df_EquipeporMetodo = pd.DataFrame({
+    coluna_eqvenda: array_eqvenda,
+    coluna_pagamento: array_pagamento,
+    coluna_valor: array_valor
+})
+
+df_EquipeporRegiao = pd.DataFrame({
+    coluna_regiao: array_regiao,
+    coluna_eqvenda: array_eqvenda,
+    coluna_valor: array_valor
+})
+
+df_ProdutoporRegiao_filtrado = df_ProdutoporRegiao[df_ProdutoporRegiao[coluna_valor] != 0]
 
 # Calculando a média dos valores de venda por produto e região
-pivot_df = df2_filtrado.pivot_table(index=coluna_produtos, columns='Região', values=coluna_valor, aggfunc=lambda x: x.mean() if (x != 0).any() else None)
+pivot_df = df_ProdutoporRegiao_filtrado.pivot_table(index=coluna_produtos, columns='Região', values=coluna_valor, aggfunc=lambda x: x.mean() if (x != 0).any() else None)
 
 # Plotando o gráfico de barras agrupadas
 pivot_df.plot(kind='bar', figsize=(12, 6))
@@ -143,8 +155,22 @@ plt.ylabel(coluna_valor)
 plt.title(f'Gráfico de Barras Agrupadas (Média dos Valores de {coluna_valor})')
 plt.legend(title='Região')
 
+pivot_df_EquipeporRegiao = df_EquipeporRegiao.pivot_table(index=coluna_eqvenda, columns='Região', values=coluna_valor, aggfunc=lambda x: x.mean() if (x != 0).any() else None)
+
+pivot_df_EquipeporRegiao.plot(kind='bar', figsize=(12, 6))
+plt.xlabel(coluna_eqvenda)
+plt.ylabel(coluna_valor)
+plt.title('Gráfico Clientes por Região')
+plt.legend(title='Região')
+
+pivot_dfClientesporMetodo = df_EquipeporMetodo.pivot_table(index=coluna_eqvenda, columns='Método de Pagamento', values=coluna_valor, aggfunc=lambda x: x.mean() if (x != 0).any() else None)
+
+pivot_dfClientesporMetodo.plot(kind='bar', figsize=(12, 6))
+plt.xlabel(coluna_eqvenda)
+plt.ylabel(coluna_valor)
+plt.title('Gráfico Clientes por Método de Pagamento')
+plt.legend(title='Método de Pagamento')
+
 # Exibindo o gráfico
 plt.tight_layout()
 plt.show()
-
-email_sender = 'mat.cesco@gmail.com'
